@@ -12,9 +12,9 @@ router.get("/todos", controller.getTodos);
 router.post("/todo", controller.postTodo);
 // PATCH /api-server/todo/:todoId
 // done값 수정(할일 > 다한일) + (다한일 > 할일)
-router.patch("/todo/:todoId", controller.getIndex);
+router.patch("/todo/:todoId", controller.patchTodo);
 // DELETE /api-server/todo/:todoId
 // 특정 todo삭제
-router.delete("/todo/:todoId", controller.getIndex);
+router.delete("/todo/:todoId", controller.deleteTodo);
 
 module.exports = router;

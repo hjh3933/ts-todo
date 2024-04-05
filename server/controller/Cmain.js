@@ -1,3 +1,4 @@
+const { where } = require("sequelize");
 const model = require("../models");
 //test용 api
 exports.getIndex = (req, res) => {
@@ -25,6 +26,38 @@ exports.postTodo = async (req, res) => {
     await model.Todo.create({
       text,
     });
+    res.send({ isSuccess: true });
+  } catch (err) {
+    console.log("server error", err);
+    res.status(500).send("SERVER ERROR!!, 관리자에게 문의하세요");
+  }
+};
+// PATCH /api-server/todo/:todoId
+exports.patchTodo = async (req, res) => {
+  try {
+    const todoId = req.params.todoId;
+    await model.Todo.update(
+      {
+        done: true,
+      },
+      {
+        where: { id: todoId },
+      }
+    );
+    res.send({ isSuccess: true });
+  } catch (err) {
+    console.log("server error", err);
+    res.status(500).send("SERVER ERROR!!, 관리자에게 문의하세요");
+  }
+};
+// DELETE /api-server/todo/:todoId
+exports.deleteTodo = async (req, res) => {
+  try {
+    const todoId = req.params.todoId;
+    await model.Todo.destroy({
+      where: { id: todoId },
+    });
+
     res.send({ isSuccess: true });
   } catch (err) {
     console.log("server error", err);

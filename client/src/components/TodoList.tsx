@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { ReduxState } from "../types/interface";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
 export default function TodoList() {
   const lists = useSelector((state: ReduxState) => state.todo.list);
@@ -15,19 +16,26 @@ export default function TodoList() {
   const todoList = lists.filter((list) => {
     return list.done === false;
   });
-  const createTodo = () => {
+  const createTodo = async () => {
     if (nextID && todoRef.current) {
+      const data = {
+        text: todoRef.current.value,
+      };
       dispatch(
         create({
           id: nextID,
-          text: todoRef.current.value,
+          text: data.text,
         })
       );
+      //axios post
+      await axios.post(`${process.env.REACT_APP_API_SERVER}/todo`, data);
       todoRef.current.value = "";
     }
   };
-  const addTodo = () => {
+  const changeDone = async (id: number) => {
     //onClick시 axios요청 보내서 db수정
+    dispatch(done(id));
+    await axios.patch(`${process.env.REACT_APP_API_SERVER}/todo/${id}`);
   };
   return (
     <section className="TodoList">
@@ -38,20 +46,16 @@ export default function TodoList() {
       </div>
       {/* state관리 예정 */}
       <ul>
-        {todoList.map((todo) => {
-          return (
-            <li key={todo.id}>
-              <span>{todo.text}</span>
-              {/* <button onClick={() => dispatch(done(todo.id))}>DONE</button> */}
-              {/* check표시 아이콘으로 변경하고 싶어 */}
-              <FontAwesomeIcon
-                icon={faCheck}
-                onClick={() => dispatch(done(todo.id))}
-                className="checkIcon"
-              />
-            </li>
-          );
-        })}
+        {todoList.map((todo) => (
+          <li key={todo.id}>
+            <span>{todo.text}</span>
+            <FontAwesomeIcon
+              icon={faCheck}
+              onClick={() => changeDone(todo.id)}
+              className="checkIcon"
+            />
+          </li>
+        ))}
       </ul>
     </section>
   );

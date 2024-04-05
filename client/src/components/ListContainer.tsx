@@ -9,7 +9,7 @@ export default function ListContainer() {
   const dispatch = useDispatch();
   async function getTodoAll() {
     const res = await axios.get(`${process.env.REACT_APP_API_SERVER}/todos`);
-    console.log(res.data);
+    // console.log(res.data);
     if (res.data) {
       dispatch(init(res.data)); //Todo[] 타입의 data를 받는 init액션
     }
