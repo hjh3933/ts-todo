@@ -26,6 +26,9 @@ export default function TodoList() {
       todoRef.current.value = "";
     }
   };
+  const addTodo = () => {
+    //onClick시 axios요청 보내서 db수정
+  };
   return (
     <section className="TodoList">
       <h2>Today Todo</h2>

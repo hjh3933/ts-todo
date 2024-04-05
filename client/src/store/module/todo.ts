@@ -1,21 +1,22 @@
-import { TodoState } from "../../types/interface";
+import { Todo, TodoState } from "../../types/interface";
 
 const initialState: TodoState = {
-  list: [
-    { id: 0, text: "react 공부하기", done: false },
-    { id: 1, text: "운동하기", done: false },
-    { id: 2, text: "저녁먹기", done: false },
-  ],
+  list: [],
 };
 
 //action설정
 //as: 형변환 as const: type이 string형이 아니고 뒤의 값만 오는 타입으로 정해진다(typeof는 곧 그 값이됨)
+const INIT = "todo/INIT" as const;
 const CREATE = "todo/CREATE" as const;
 const DONE = "todo/DONE" as const;
 
 let count = initialState.list.length;
 initialState["nextID"] = count;
 
+export const init = (data: Todo[]) => ({
+  type: INIT,
+  data, //obj {id, text, done}
+});
 export const create = (payload: { id: number; text: string }) => ({
   type: CREATE,
   payload, // {id, text}
@@ -25,6 +26,10 @@ export const done = (id: number) => ({
   id, //number
 });
 
+interface Init {
+  type: typeof INIT;
+  data: Todo[];
+}
 interface Create {
   type: typeof CREATE;
   payload: { id: number; text: string };
@@ -33,10 +38,19 @@ interface Done {
   type: typeof DONE;
   id: number;
 }
-type Action = Create | Done;
+type Action = Create | Done | Init;
 
 export function todoReducer(state = initialState, action: Action) {
   switch (action.type) {
+    case INIT:
+      return {
+        ...state,
+        list: action.data,
+        nextID:
+          action.data.length === 0
+            ? 1
+            : action.data[action.data.length - 1].id + 1,
+      };
     case CREATE:
       if (action.payload.text.trim() === "") return state;
       return {
